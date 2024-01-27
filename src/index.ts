@@ -1,30 +1,21 @@
-const { app, BrowserWindow } = require('electron/main')
-const path = require('node:path')
+import {app,ipcMain, BrowserWindow} from "electron"
 
-function createWindow () {
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
-  })
+let mainWindow : BrowserWindow
 
-  win.loadFile('index.html')
-}
+app.on("ready", ()=>{
+    mainWindow = new BrowserWindow({
+        width:900, height: 600,
+        webPreferences: {
+            preload: __dirname + "/preload.js"
+        }
+    })
 
-app.whenReady().then(() => {
-  createWindow()
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow()
-    }
-  })
-})
+    mainWindow.loadFile("./index.html")
+    mainWindow.on("ready-to-show", () => mainWindow.show())
+});
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
 })
